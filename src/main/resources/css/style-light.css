@@ -1,0 +1,179 @@
+@font-face {
+    font-family: "Raleway Extra Light";
+    font-style: normal;
+	font-weight: 200;
+    src: url("../fonts/Raleway/Raleway-ExtraLight.ttf");
+}
+
+.root {
+  -fx-font-size: 14px;
+  	-fx-font-family: "Times New Roman";
+}
+
+#board-user-container {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px;
+}
+
+.window-background {
+	-fx-padding: 10px;
+}
+
+.pane-background {
+	-fx-background-color: white;
+	-fx-border-color: white;
+	-fx-background-radius: 10px;
+	-fx-border-radius: 10px;
+	-fx-border-width: 1px;
+	-fx-padding: 10px;
+}
+
+.text-title-extra-light {
+	-fx-font-family: "Raleway Extra Light";
+	-fx-font-weight: 200;
+	-fx-font-size: 40px;
+	-fx-padding: 10px;
+}
+
+#ios-field {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px;
+	-fx-font-size: 16px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#ios-field:focused {
+    -fx-border-color : #D7D6DC;
+    -fx-background-color: white;
+} 
+
+#ios-date {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+	-fx-font-size: 16px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#ios-date:focused {
+    -fx-border-color : #D7D6DC;
+    -fx-background-color: white;
+} 
+
+#ios-box {
+    -fx-background-color: white;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+	-fx-font-size: 14px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#ios-box:focused {
+    -fx-background-color: white;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+	-fx-font-size: 14px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+} 
+
+#center-column {
+	-fx-alignment: CENTER;
+}
+
+#center-right-column {
+	-fx-alignment: CENTER-RIGHT;
+}
+
+.close-button {
+	-fx-font-size: 20px;
+}
+
+.table-view .column-header#center-column .label {
+  -fx-alignment: CENTER;
+}
+
+.table-view .column-header#center-right-column .label {
+  -fx-alignment: CENTER_RIGHT;
+}
+
+/*
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-column {
+	-fx-alignment: CENTER;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(to bottom, #1dbbdd44, #93f9b944);
+    -fx-background-radius: 7px 7px 0px 0px;
+    -fx-background-insets: 0 11px 0 0;
+    -fx-padding: 0 0 5px 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+}
+.table-row-cell: hover {
+    -fx-background-color: #93f9b911;
+    -fx-text-background-color: red;
+}
+.table-row-cell: odd{
+    -fx-background-color: #93f9b911;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell: even{
+    -fx-background-color: #1dbbdd11;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .scroll-bar .increment-button,
+.table-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical .thumb{
+    -fx-background-color:  linear-gradient(to bottom, #1dbbdd44, #93f9b944);
+}
+.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color:  linear-gradient(to right, #1dbbdd44, #93f9b944);
+}
+
+.table-row-cell: highlighted {
+    -fx-background-color: #81c483;
+    -fx-background-radius: 15px;
+}
+*/
