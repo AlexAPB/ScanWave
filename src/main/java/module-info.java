@@ -8,13 +8,10 @@ module com.fatec.rfidscanwave {
     requires org.jfxtras.styles.jmetro;
 
     requires org.controlsfx.controls;
-    requires mfx.core;
-    requires mfx.effects;
-    requires mfx.localization;
-    requires mfx.resources;
-    requires MaterialFX;
+    requires se.alipsa.ymp;
 
     opens com.fatec.rfidscanwave.model to javafx.base;
+    opens com.fatec.rfidscanwave.ui.table to javafx.base;
 
     opens com.fatec.rfidscanwave to javafx.fxml;
     exports com.fatec.rfidscanwave;

@@ -1,9 +1,6 @@
 package com.fatec.rfidscanwave;
 
 import com.fatec.rfidscanwave.view.ScanWaveView;
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Theme;
-import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,7 +12,6 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class ScanWave extends Application {
@@ -27,21 +23,18 @@ public class ScanWave extends Application {
 
         Scene scene = new Scene(
                 root,
-                Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.9,
-                Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.9
+                650,
+                650
         );
 
         ScanWaveView scanWaveView = new ScanWaveView(this);
         scanWaveView.create();
 
         JMetro jMetro = new JMetro(root, Style.LIGHT);
-        jMetro.getOverridingStylesheets().add(ScanWave.class.getResource("/css/reset.css").toString());
+        root.getStylesheets().add(ScanWave.class.getResource("/css/reset.css").toString());
+        root.getStylesheets().add(ScanWave.class.getResource("/css/style-light.css").toString());
 
-        if(jMetro.getStyle() == Style.LIGHT){
-            jMetro.getOverridingStylesheets().add(ScanWave.class.getResource("/css/style-light.css").toString());
-        } else {
-            jMetro.getOverridingStylesheets().add(ScanWave.class.getResource("/css/style-dark.css").toString());
-        }
+        jMetro.getOverridingStylesheets().add(ScanWave.class.getResource("/css/style-light.css").toString());
 
         stage.setTitle("Scan Wave");
         stage.setScene(scene);

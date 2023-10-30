@@ -1,13 +1,38 @@
 @font-face {
-    font-family: "Raleway Extra Light";
+    font-family: "Raleway Light";
     font-style: normal;
-	font-weight: 200;
-    src: url("../fonts/Raleway/Raleway-ExtraLight.ttf");
+	font-weight: 300;
+    src: url("../fonts/Raleway/Raleway-Light.ttf");
 }
 
-.root {
-  -fx-font-size: 14px;
-  	-fx-font-family: "Times New Roman";
+@font-face {
+    font-family: "Raleway SemiBold";
+    font-style: normal;
+	font-weight: 600;
+    src: url("../fonts/Raleway/Raleway-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "Raleway";
+    font-style: normal;
+	font-weight: 500;
+    src: url("../fonts/Raleway/Raleway-Medium.ttf");
+}
+
+
+@font-face {
+    font-family: "Raleway Italic";
+    font-style: italic;
+	font-weight: 500;
+    src: url("../fonts/Raleway/Raleway-MediumItalic.ttf");
+}
+
+.back-container {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+	-fx-padding: 10px 15px;
 }
 
 #board-user-container {
@@ -15,7 +40,114 @@
     -fx-border-color : #D7D6DC;
 	-fx-border-radius: 10px;
     -fx-background-radius: 10px;
-    -fx-padding: 10px;
+}
+
+.date-text {
+	-fx-font-family: Calibri;
+    -fx-font-style: normal;
+	-fx-font-weight: bold;
+	-fx-font-size: 1.1em;
+	-fx-opacity: 0.75;
+}
+
+.semibold-title {
+	-fx-font-family: "Raleway SemiBold";
+    -fx-font-style: normal;
+	-fx-font-weight: 600;
+	-fx-font-size: 2em;
+}
+
+.italic-title {
+	-fx-font-family: "Raleway Italic";
+    -fx-font-style: Italic;
+	-fx-font-weight: 500;
+	-fx-font-size: 1.2em;
+}
+
+.normal-title {
+	-fx-font-family: "Raleway";
+    -fx-font-style: normal;
+	-fx-font-weight: 500;
+	-fx-font-size: 1.3em;
+}
+
+.warning-text {
+	-fx-font-family: Calibri;
+    -fx-font-style: normal;
+	-fx-font-weight: bold;
+	-fx-font-size: 1.65em;
+	-fx-opacity: 1;
+}
+
+.login-title {
+	-fx-font-family: "Raleway";
+    -fx-font-style: normal;
+	-fx-font-weight: 500;
+	-fx-font-size: 1.3em;
+}
+
+.login-field {
+	-fx-font-family: "Raleway";
+    -fx-font-style: normal;
+	-fx-font-weight: 500;
+	-fx-font-color: white;
+	-fx-font-size: 1.5em;
+}
+
+#login-field {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 4px;
+	-fx-font-size: 15px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#login-field:focused {
+    -fx-border-color : #D7D6DC;
+    -fx-background-color: white;
+} 
+
+#login-button {
+    -fx-background-color: white;
+    -fx-border-color : #D7D6DC;
+	-fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+	-fx-font-size: 16px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#login-button:focused {
+    -fx-border-color : #D7D6DC;
+    -fx-background-color: white;
+} 
+
+.mini-semibold-title {
+	-fx-font-family: "Raleway SemiBold";
+	-fx-font-weight: 600;
+	-fx-font-size: 1.2em;
+}
+
+.opacity-90 {
+	-fx-opacity: 0.9;
+}
+
+.opacity-80 {
+	-fx-opacity: 0.8;
+}
+
+.opacity-70 {
+	-fx-opacity: 0.7;
+}
+
+.opacity-60 {
+	-fx-opacity: 0.6;
+}
+
+.opacity-50 {
+	-fx-opacity: 0.5;
 }
 
 .window-background {
@@ -101,6 +233,16 @@
 
 .table-view .column-header#center-right-column .label {
   -fx-alignment: CENTER_RIGHT;
+}
+
+.table-view .column-header .label {
+  -fx-alignment: CENTER;
+  -fx-font-size: 1.15em;
+}
+
+.table-column {
+  -fx-alignment: CENTER;
+  -fx-font-size: 1.15em;
 }
 
 /*

@@ -13,7 +13,10 @@ import javafx.scene.shape.Circle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class EmployeeModel {
@@ -24,12 +27,11 @@ public class EmployeeModel {
     private String phoneNumber;
     private String address;
     private float salary;
+    private ShiftModel shift;
     private String cpf;
     private LocalDate hireDate;
-    private int workdayDuration;
     private DepartmentModel department;
     private JobModel job;
-    private char workShift;
     private String rfid;
     private ImageView image;
     private List<ClockDayModel> clocks;
@@ -70,6 +72,10 @@ public class EmployeeModel {
         this.hireDate = hireDate;
     }
 
+    public void setShift(ShiftModel shift) {
+        this.shift = shift;
+    }
+
     public void setJob(JobModel job) {
         this.job = job;
 
@@ -89,16 +95,8 @@ public class EmployeeModel {
         this.salary = salary;
     }
 
-    public void setWorkdayDuration(int workdayDuration) {
-        this.workdayDuration = workdayDuration;
-    }
-
     public void setClocks(List<ClockDayModel> clocks) {
         this.clocks = clocks;
-    }
-
-    public void setWorkShift(char workShift) {
-        this.workShift = workShift;
     }
 
     public Circle getWorking() {
@@ -113,10 +111,32 @@ public class EmployeeModel {
         return working;
     }
 
+    public int getAge(){
+        return Period.between(birthDate, LocalDate.now()).getYears();
+    }
+
+    public boolean isWorking() {
+        return getClocks().get(getClocks().size() - 1).isWorking();
+    }
+
     public Circle getThumbnail(){
         Circle circle = new Circle(25);
         circle.setFill(new ImagePattern(image.getImage()));
+        circle.setSmooth(true);
         return circle;
+    }
+
+    public String getWorkdayDuration(){
+        return Duration.between(shift.getClockInTime(), shift.getClockOutTime()).toHoursPart() + "h";
+    }
+
+    public String getWorkshift(){
+        return shift.getClockInTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - "
+                + shift.getClockOutTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+    public ShiftModel getShift() {
+        return shift;
     }
 
     public int getId() {
@@ -137,10 +157,6 @@ public class EmployeeModel {
 
     public float getSalary() {
         return salary;
-    }
-
-    public String getWorkdayDuration() {
-        return workdayDuration + "h";
     }
 
     public JobModel getJob() {
@@ -167,7 +183,7 @@ public class EmployeeModel {
             if(clock.getClockIn() == null)
                 continue;
 
-            if(clock.getClockIn().getClock().toLocalDate().equals(date)) {
+            if(clock.getClockIn().getDate().equals(date)) {
                 working.setFill(Color.GREEN);
                 return true;
             }
@@ -190,10 +206,6 @@ public class EmployeeModel {
 
     public String getRfid() {
         return rfid;
-    }
-
-    public char getWorkShift() {
-        return workShift;
     }
 
     public List<ClockDayModel> getClocks() {

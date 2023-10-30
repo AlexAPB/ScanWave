@@ -1,60 +1,34 @@
 package com.fatec.rfidscanwave.view;
 
-import com.fatec.rfidscanwave.ScanWave;
-import com.fatec.rfidscanwave.controller.EmployeesController;
 import com.fatec.rfidscanwave.db.ScanWaveDB;
 import com.fatec.rfidscanwave.model.DepartmentModel;
 import com.fatec.rfidscanwave.model.EmployeeModel;
 import com.fatec.rfidscanwave.model.JobModel;
-import com.fatec.rfidscanwave.ui.TextField2;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.skins.MFXTableViewSkin;
+import com.fatec.rfidscanwave.model.ManagerModel;
+import com.fatec.rfidscanwave.ui.input.TextField2;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.skin.DatePickerSkin;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.SVGPath;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
 import jfxtras.styles.jmetro.*;
-import org.controlsfx.control.SearchableComboBox;
-import org.controlsfx.control.spreadsheet.SpreadsheetColumn;
-import org.controlsfx.control.spreadsheet.SpreadsheetView;
-import org.controlsfx.control.tableview2.TableColumn2;
-import org.controlsfx.control.tableview2.TableView2;
 
 import java.time.LocalDate;
-import java.time.chrono.Chronology;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 
-import static java.awt.SystemColor.text;
+import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
+import static javafx.scene.control.TableView.UNCONSTRAINED_RESIZE_POLICY;
 
 public class EmployeesView {
     private final ScanWaveDB db;
@@ -66,7 +40,7 @@ public class EmployeesView {
     private TableView<EmployeeModel> table;
     private final List<DepartmentModel> departments;
     private final List<JobModel> jobs;
-    private final ObservableList<EmployeeModel> simpleEmployees;
+    private ObservableList<EmployeeModel> simpleEmployees;
     private ObservableList<String> filterModels = FXCollections.observableArrayList("-", "ID", "Nome", "Cargo", "Departamento", "Turno");
 
     public EmployeesView(ScanWaveView parent, ScanWaveDB db){
@@ -79,6 +53,9 @@ public class EmployeesView {
         createScreen();
         createPanes(screen);
         create();
+
+        screen.setVisible(false);
+        screen.setDisable(true);
     }
 
     public void createScreen(){
@@ -91,9 +68,19 @@ public class EmployeesView {
         HBox optionGroup = new HBox();
         optionGroup.setMinHeight(50);
         optionGroup.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        Label temp = new Label("Espaço para botões");
-        temp.setStyle("-fx-font-size: 30px;");
-        optionGroup.getChildren().add(temp);
+        Label logoutButton = new Label("Sair");
+        logoutButton.setStyle("-fx-font-size: 1.8em; -fx-opacity: 0.75; -fx-padding: 0px 15px;");
+        optionGroup.setAlignment(Pos.CENTER_RIGHT);
+        logoutButton.pressedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                if(!t1)
+                    return;
+
+                parent.loadLogin();
+            }
+        });
+        optionGroup.getChildren().add(logoutButton);
 
         JMetro jmetro = new JMetro(optionGroup, Style.DARK);
 
@@ -157,11 +144,13 @@ public class EmployeesView {
 
         TableColumn<EmployeeModel, Circle> imageColumn = new TableColumn();
         imageColumn.setPrefWidth(80);
+        imageColumn.setResizable(false);
         imageColumn.setCellValueFactory(new PropertyValueFactory<>("thumbnail"));
         imageColumn.setSortable(false);
 
         TableColumn<EmployeeModel, Circle> isWorkingColumn = new TableColumn();
         isWorkingColumn.setPrefWidth(80);
+        isWorkingColumn.setResizable(false);
         isWorkingColumn.setCellValueFactory(new PropertyValueFactory<>("working"));
         isWorkingColumn.setSortable(false);
         isWorkingColumn.setId("center-right-column");
@@ -180,7 +169,7 @@ public class EmployeesView {
 
         TableColumn<EmployeeModel, Integer> workShiftColumn = new TableColumn("Turno");
         workShiftColumn.setPrefWidth(100);
-        workShiftColumn.setCellValueFactory(new PropertyValueFactory<>("workShift"));
+        workShiftColumn.setCellValueFactory(new PropertyValueFactory<>("workshift"));
         workShiftColumn.setId("center-column");
 
         TableColumn<EmployeeModel, String> workDurationColumn = new TableColumn("Jornada");
@@ -361,5 +350,15 @@ public class EmployeesView {
 
         overTableBox.getChildren().add(expand);
         overTableBox.getChildren().add(vBox);
+    }
+
+    public void load(){
+        simpleEmployees.clear();
+
+        if(ManagerModel.getInstance().getDepartment() == 8){
+            simpleEmployees.addAll(FXCollections.observableArrayList(db.getSimpleEmployees(jobs)));
+        } else {
+            simpleEmployees.addAll(FXCollections.observableArrayList(db.getSimpleEmployeesByManagerDepartment(jobs)));
+        }
     }
 }
