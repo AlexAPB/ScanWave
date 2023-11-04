@@ -47,19 +47,6 @@ public class MonthYearSelector extends HBox {
         nextIcon.setSize(30);
 
         previous = new Button();
-        previous.pressedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                if(!t1)
-                    return;
-
-                if(min.getYear() == current.getYear() && min.getMonth() == current.getMonth())
-                    return;
-
-                current = current.minusMonths(1);
-                date.setText(current.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " + current.getYear());
-            }
-        });
         previous.setGraphic(previousIcon);
 
         now = LocalDate.now();
@@ -70,20 +57,31 @@ public class MonthYearSelector extends HBox {
         date.getStyleClass().add("date-text");
 
         next = new Button();
-        next.pressedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                if(!t1)
-                    return;
-
-                if(current.getMonthValue() == now.getMonthValue() && current.getYear() == now.getYear())
-                    return;
-
-                current = current.plusMonths(1);
-                date.setText(current.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " + current.getYear());
-            }
-        });
         next.setGraphic(nextIcon);
+    }
+
+    public boolean previous(){
+        if(previous.isArmed())
+            return false;
+
+        if(min.getYear() == current.getYear() && min.getMonth() == current.getMonth())
+            return false;
+
+        current = current.minusMonths(1);
+        date.setText(current.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " + current.getYear());
+        return true;
+    }
+
+    public boolean next(){
+        if(next.isArmed())
+            return false;
+
+        if(current.getMonthValue() == now.getMonthValue() && current.getYear() == now.getYear())
+            return false;
+
+        current = current.plusMonths(1);
+        date.setText(current.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " + current.getYear());
+        return true;
     }
 
     public Text getDate() {

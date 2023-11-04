@@ -20,7 +20,7 @@ public interface IScanWaveDB {
     List<EmployeeModel> getSimpleEmployees(List<JobModel> jobList);
     List<EmployeeModel> getSimpleEmployeesByManagerDepartment(List<JobModel> jobList);
     List<EmployeeModel> getEmployees(List<JobModel> jobList);
-    List<ClockDayModel> getClockListById(EmployeeModel employee);
+    List<ClockDayModel> getClockListById(EmployeeModel employee, boolean haveShift);
     ClockDayModel getClockDayByEmployeeId(int employeeId);
     ClockDayModel getLastClockDayByEmployeeId(int employeeId);
     Image getImageById(int id, boolean isThumbnail);

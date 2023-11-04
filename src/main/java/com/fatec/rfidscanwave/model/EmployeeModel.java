@@ -127,7 +127,7 @@ public class EmployeeModel {
     }
 
     public String getWorkdayDuration(){
-        return Duration.between(shift.getClockInTime(), shift.getClockOutTime()).toHoursPart() + "h";
+        return Duration.between(shift.getClockInTime(), shift.getClockOutTime()).minusSeconds(shift.getBreakDuration().toSecondOfDay()).toHoursPart() + "h";
     }
 
     public String getWorkshift(){

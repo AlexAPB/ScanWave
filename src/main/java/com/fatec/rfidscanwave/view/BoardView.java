@@ -14,13 +14,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -31,8 +29,6 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import jfxtras.styles.jmetro.JMetroStyleClass;
-import jfxtras.styles.jmetro.MDL2IconFont;
-import se.alipsa.ymp.YearMonthPicker;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -40,13 +36,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.fatec.rfidscanwave.util.FXUtil.getDivider;
 import static com.fatec.rfidscanwave.util.FXUtil.getSpacer;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
-import static javafx.scene.control.TableView.UNCONSTRAINED_RESIZE_POLICY;
 
 public class BoardView {
+    private EmployeeModel employee;
     private final ScanWaveView parent;
     private final ScanWaveDB db;
     private final ScrollPane mainScreen;
@@ -79,6 +76,7 @@ public class BoardView {
     private List<ClockDayModel> clockDayList;
     private ObservableList<ClockRow> clockRowList;
     private SortedList<ClockRow> sortedClockList;
+    private FilteredList<ClockRow> filteredList;
 
     private Editor editor;
 
@@ -488,15 +486,17 @@ public class BoardView {
                 continue;
 
             if(c.getOffDuty() == 0 || c.getOffDuty() == 1) {
-                totalTime += Duration.between(c.getShift().getClockInTime(), c.getShift().getClockOutTime())
-                        .minusSeconds(c.getShift().getBreakDuration().toSecondOfDay()).toHoursPart();
+                totalTime += Math.round(Duration.between(c.getShift().getClockInTime(), c.getShift().getClockOutTime())
+                        .minusSeconds(c.getShift().getBreakDuration().toSecondOfDay()).toMinutes() / 60f);
             }
 
             if(c.getOffDuty() == 0 && c.getClockOut() != null) {
-                workedTime += Duration.between(
+                long time = Duration.between(
                         LocalDateTime.of(c.getClockIn().getDate(), c.getClockIn().getTime()),
                         LocalDateTime.of(c.getClockOut().getDate(), c.getClockOut().getTime())
-                ).minusSeconds(c.getShift().getBreakDuration().toSecondOfDay()).toHoursPart();
+                ).minusSeconds(c.getShift().getBreakDuration().toSecondOfDay()).toMinutes();
+
+                workedTime += Math.round(time / 60f);
             }
 
             if(c.getOffDuty() == 0){
@@ -506,8 +506,8 @@ public class BoardView {
                 LocalDateTime dateOut = LocalDateTime.of(c.getClockOut().getDate(), c.getShift().getClockOutTime());
                 Duration durationOut = Duration.between(dateOut, c.getClockOut().getDateTime());
 
-                if((durationIn.toHoursPart() + durationOut.toHoursPart()) > 0)
-                    overtime += durationIn.toHoursPart() + durationOut.toHoursPart();
+                if(((durationIn.toMinutes() + durationOut.toMinutes()) / 60f) > 0)
+                    overtime += Math.round((durationIn.toMinutes() + durationOut.toMinutes()) / 60f);
             }
         }
 
@@ -516,13 +516,19 @@ public class BoardView {
         overtimeLabel.setText(overtime + "h");
     }
 
+    public static int iaa = 0;
     private void loadTable(){
         final List<TableColumn<ClockRow, ?>> columns = clockTable.getColumns();
 
-        FilteredList<ClockRow> filteredList = new FilteredList<>(clockRowList);
-        filteredList.predicateProperty().bind(Bindings.createObjectBinding(() -> {
-            if(!(datePicker.getNext().isPressed() || datePicker.getPrevious().isPressed()))
+        AtomicBoolean changed = new AtomicBoolean(true);
+        filteredList = new FilteredList<>(clockRowList);
+
+        filteredList.predicateProperty().bind(
+                Bindings.createObjectBinding(() -> {
+            if(!changed.get())
                 return null;
+
+            changed.set(false);
 
             LocalDate date = datePicker.getCurrent();
 
@@ -546,13 +552,86 @@ public class BoardView {
                 return false;
             };
 
-        }, datePicker.getNext().pressedProperty(), datePicker.getPrevious().pressedProperty()));
+        },
+                        datePicker.getNext().pressedProperty(),
+                        datePicker.getPrevious().pressedProperty())
+        );
+
+        if(sortedClockList == null) {
+            datePicker.getPrevious().pressedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                    if (t1) {
+                        if (datePicker.previous()) {
+                            changed.set(true);
+                            clockDayList.clear();
+                            employee.setClocks(db.getClockListById(employee, true));
+                            clockDayList.addAll(FXCollections.observableArrayList(ClockDayModel.getMonthlyClock(employee, datePicker.getCurrent())));
+
+                            List<ClockRow> clockRows = new ArrayList<>();
+
+                            for (ClockDayModel c : clockDayList) {
+                                clockRows.add(new ClockRow(c));
+                            }
+
+                            clockRowList.clear();
+                            clockRowList.addAll(FXCollections.observableList(clockRows));
+
+                            FilteredList<ClockRow> newFiltered = new FilteredList<>(clockRowList);
+                            newFiltered.predicateProperty().set(filteredList.getPredicate());
+
+                            sortedClockList = new SortedList<>(newFiltered);
+
+                            loadTimeWorkedAndOvertime();
+                            initLateGraphic();
+                            initPresenceGraphic();
+                        }
+
+                    }
+                }
+            });
+
+            datePicker.getNext().pressedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                    if (t1) {
+                        if (datePicker.next()) {
+                            changed.set(true);
+                            clockDayList.clear();
+                            employee.setClocks(db.getClockListById(employee, true));
+                            clockDayList.addAll(FXCollections.observableArrayList(ClockDayModel.getMonthlyClock(employee, datePicker.getCurrent())));
+
+                            List<ClockRow> clockRows = new ArrayList<>();
+
+                            for (ClockDayModel c : clockDayList) {
+                                clockRows.add(new ClockRow(c));
+                            }
+
+                            clockRowList.clear();
+                            clockRowList.addAll(FXCollections.observableList(clockRows));
+
+                            FilteredList<ClockRow> newFiltered = new FilteredList<>(clockRowList);
+                            newFiltered.predicateProperty().set(filteredList.getPredicate());
+
+                            sortedClockList = new SortedList<>(newFiltered);
+
+                            loadTimeWorkedAndOvertime();
+                            initLateGraphic();
+                            initPresenceGraphic();
+                        }
+
+                    }
+                }
+            });
+        }
 
         sortedClockList = new SortedList<>(filteredList);
         sortedClockList.comparatorProperty().bind(clockTable.comparatorProperty());
     }
 
     public void updateView(EmployeeModel employee){
+        this.employee = employee;
+
         editor.setEmployee(employee);
         clockDayList = FXCollections.observableArrayList(ClockDayModel.getMonthlyClock(employee, datePicker.getCurrent()));
 

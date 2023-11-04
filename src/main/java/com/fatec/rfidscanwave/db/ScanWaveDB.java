@@ -62,7 +62,7 @@ public class ScanWaveDB implements IScanWaveDB {
                 employee.setBirthDate(resultSet.getTimestamp("birth_date").toLocalDateTime().toLocalDate());
                 employee.setHireDate(resultSet.getTimestamp("hire_date").toLocalDateTime().toLocalDate());
                 employee.setImage(getImageById(employee.getId(), true), EmployeeModel.ImageType.MINI);
-                employee.setClocks(getClockListById(employee));
+                employee.setClocks(getClockListById(employee, false));
 
                 for(ClockDayModel c : employee.getClocks()){
                     c.setShift(employee.getShift());
@@ -136,7 +136,7 @@ public class ScanWaveDB implements IScanWaveDB {
                     employee.setBirthDate(resultSet.getTimestamp("birth_date").toLocalDateTime().toLocalDate());
                     employee.setHireDate(resultSet.getTimestamp("hire_date").toLocalDateTime().toLocalDate());
                     employee.setImage(getImageById(employee.getId(), true), EmployeeModel.ImageType.MINI);
-                    employee.setClocks(getClockListById(employee));
+                    employee.setClocks(getClockListById(employee, false));
 
                     for(ClockDayModel c : employee.getClocks()){
                         c.setShift(employee.getShift());
@@ -158,7 +158,7 @@ public class ScanWaveDB implements IScanWaveDB {
     }
 
     @Override
-    public List<ClockDayModel> getClockListById(EmployeeModel employee){
+    public List<ClockDayModel> getClockListById(EmployeeModel employee, boolean haveShift){
         ResultSet resultSet = null;
         Statement statement = null;
         List<ClockDayModel> clockList = new ArrayList<>();
@@ -191,6 +191,12 @@ public class ScanWaveDB implements IScanWaveDB {
             } while(resultSet.next());
 
             clockList.add(clockDay);
+
+            if(haveShift){
+                for(ClockDayModel c : clockList){
+                    c.setShift(employee.getShift());
+                }
+            }
 
             resultSet.close();
             statement.close();

@@ -66,15 +66,18 @@ public class ClockDayModel {
         int min = 1;
         int max = lengthOfMonth;
 
-        if(Period.between(LocalDate.now().withDayOfMonth(lengthOfMonth), date).getDays() < 0){
-            max -= Period.between(date, LocalDate.now().withDayOfMonth(lengthOfMonth)).getDays();
-        }
+        if(LocalDate.now().getYear() == date.getYear() &&
+                LocalDate.now().getMonth().equals(date.getMonth()))
+            if(Period.between(LocalDate.now().withDayOfMonth(lengthOfMonth), date).getDays() < 0){
+                max -= Period.between(date, LocalDate.now().withDayOfMonth(lengthOfMonth)).getDays();
+            }
 
         if(Period.between(employee.getHireDate(), date.withDayOfMonth(1)).getDays() < 0)
             min += Math.abs(Period.between(employee.getHireDate(), date.withDayOfMonth(1)).getDays());
 
         for(int i = max; i >= min; i--){
             boolean next = false;
+
             for(ClockDayModel c : employee.getClocks()){
                 if(c.clockIn == null)
                     continue;
@@ -95,6 +98,7 @@ public class ClockDayModel {
                     clockList.add(new ClockDayModel(employee.getShift(), 1, date.withDayOfMonth(i)));
             }
         }
+
 
         return clockList;
     }
@@ -367,8 +371,9 @@ public class ClockDayModel {
                     LocalDateTime entering = LocalDateTime
                             .of(
                                     date1.getDate().getYear(), date1.getDate().getMonth(), date1.getDate().getDayOfMonth(),
-                                    shift.getClockOutTime().getHour(), shift.getClockOutTime().getMinute(), shift.getClockOutTime().getSecond()
+                                    shift.getClockInTime().getHour(), shift.getClockInTime().getMinute(), shift.getClockInTime().getSecond()
                             );
+
 
                     if (Duration.between(date1.getDateTime(), entering).getSeconds() <= -600) {
                         in.setFill(Color.rgb(127,0 , 0));
@@ -436,7 +441,7 @@ public class ClockDayModel {
                     LocalDateTime entering = LocalDateTime
                             .of(
                                     date1.getDate().getYear(), date1.getDate().getMonth(), date1.getDate().getDayOfMonth(),
-                                    shift.getClockOutTime().getHour(), shift.getClockOutTime().getMinute(), shift.getClockOutTime().getSecond()
+                                    shift.getClockInTime().getHour(), shift.getClockInTime().getMinute(), shift.getClockInTime().getSecond()
                             );
 
                     if (Duration.between(date1.getDateTime(), entering).getSeconds() <= -600) {
